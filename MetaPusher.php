@@ -13,8 +13,8 @@ if (!defined('ABSPATH')) exit;
  * PLUGIN CONSTANTS
  * -------------------------------------------------
  */
-define( 'META_PUSHER_VERSION',    '1.0.0' );
-define( 'META_PUSHER_UPDATE_URL', 'https://metapusher.com/cdn/plugin/info.json' ); // <-- apna URL yahan daalo
+define( 'META_PUSHER_VERSION',    '1.3.0' );
+define( 'META_PUSHER_UPDATE_URL', 'https://metapusher.com/cdn/plugin/info.json' );
 
 /**
  * -------------------------------------------------
@@ -67,18 +67,20 @@ add_action('transition_post_status', function ($new_status, $old_status, $post) 
 
     if ($post->post_type !== 'post') return;
     if ($new_status !== 'publish') return;
+	if ($old_status === 'publish') return;
     if (get_option('meta_pusher_auto_notify', '0') !== '1') return;
 
     $user_key = get_option('meta_pusher_user_key', '');
     if (empty($user_key)) return;
 
-    wp_remote_post('https://projects.bigsmart.in/Pusher/auto-notify.php', [
+    wp_remote_post('https://metapusher.com/api/auto-send-notification', [
         'body' => [
             'user_key' => $user_key,
             'title'    => get_the_title($post),
             'body'     => get_the_excerpt($post),
             'url'      => get_permalink($post),
             'icon'     => get_site_icon_url(192),
+			'image' => has_post_thumbnail($post) ? get_the_post_thumbnail_url($post, 'full') : '',
         ],
         'timeout' => 10,
     ]);
@@ -405,7 +407,36 @@ add_action('admin_head', function () {
            float:right;
 		   margin-bottom:16px;
         }
+		@media screen and (max-width: 1024px) {
+			.mp-col-layout { flex-direction: column; }
+			.mp-col-side   { width: 100%; }
+			.mp-col-main   { width: 100%; }
+		}
 
+
+		@media screen and (max-width: 782px) {
+			.mp-wrap               { margin-top: 10px; }
+			.mp-section            { padding: 16px 14px; border-radius: 8px; margin-bottom: 16px; }
+			.mp-section h2         { font-size: 14px; margin-bottom: 12px; padding-bottom: 10px; }
+			.mp-steps li           { gap: 10px; }
+			.mp-step-content strong{ font-size: 12px; }
+			.mp-step-content p     { font-size: 12px; }
+			.mp-field-row input[type="text"] { font-size: 16px; } /* iOS zoom prevent */
+			.mp-checkbox-row       { padding: 11px 12px; gap: 8px; }
+			.mp-checkbox-row label { font-size: 13px; }
+			.mp-support-header     { padding: 16px 14px; }
+			.mp-support-header img { width: 40px; height: 40px; }
+			.mp-support-header h3  { font-size: 15px; }
+			.mp-support-body       { padding: 14px; }
+			.mp-col-layout         { gap: 16px; }
+		}
+
+		@media screen and (max-width: 480px) {
+			.mp-wrap h1                      { font-size: 18px !important; }
+			.mp-wrap > p                     { font-size: 12px !important; }
+			.mp-save-wrap .button-primary    { width: 100%; text-align: center; padding: 10px 22px; }
+		}
+		
     </style>
     <?php
 });
