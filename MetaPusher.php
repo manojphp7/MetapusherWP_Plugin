@@ -1,9 +1,10 @@
 <?php
 /*
 Plugin Name: Meta Pusher
-Description: Free Meta Pusher Notification System
-Version: 1.0.0
+Description: Free Bulk Push Notification System
+Version: 1.5.0
 Author: Meta Pusher
+Plugin URI: https://metapusher.com
 */
 
 if (!defined('ABSPATH')) exit;
@@ -13,7 +14,7 @@ if (!defined('ABSPATH')) exit;
  * PLUGIN CONSTANTS
  * -------------------------------------------------
  */
-define( 'META_PUSHER_VERSION',    '1.3.0' );
+define( 'META_PUSHER_VERSION',    '1.5.0' );
 define( 'META_PUSHER_UPDATE_URL', 'https://metapusher.com/cdn/plugin/info.json' );
 
 /**
@@ -78,7 +79,7 @@ add_action('transition_post_status', function ($new_status, $old_status, $post) 
             'user_key' => $user_key,
             'title'    => get_the_title($post),
             'body'     => get_the_excerpt($post),
-            'url'      => get_permalink($post),
+            'landingUrl' => get_permalink($post),
             'icon'     => get_site_icon_url(192),
 			'image' => has_post_thumbnail($post) ? get_the_post_thumbnail_url($post, 'full') : '',
         ],
